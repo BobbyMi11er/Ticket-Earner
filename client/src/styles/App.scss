@@ -1,0 +1,9 @@
+@import '_vars.scss';
+
+.App {
+    text-align: center;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
