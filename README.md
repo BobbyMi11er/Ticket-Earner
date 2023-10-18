@@ -31,9 +31,12 @@ In order for the program to work, you need access to musixmatch's API. To do so,
     
 After this is included, the backend will be able to access lyrics from musixmatch's API. 
 
-
+## Future Steps
+This is currently just an MVP build. The next steps for this project include:
+* Implementing the `usePlayable` hook to check if the user has already played in the current browser window and not allow them to play again (ie don't let them reload the page and replay if they mess up)
+* Researching and implementing Docker containers
+* Hosting on either Fly.io or Amazon EC2 
   
-
 
 ##### Developer: Bobby Miller
 ##### Email: robert.p.miller@vanderbilt.edu
