@@ -3,10 +3,10 @@ import { Progress } from "antd";
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { Modal, message } from "antd";
-import palate from "../styles/_vars.scss";
 
 import Form from "./Form";
 import axios from "axios";
+import axiosInstance from "../axios";
 
 export default function Game() {
     const [percent, setPercent] = useState(0);
@@ -34,7 +34,7 @@ export default function Game() {
     const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
-        axios.get(`/getData`).then((response) => {
+        axiosInstance.get(`/getData`).then((response) => {
             setData(response.data);
             const tempData = response.data;
             let albums = [];
@@ -60,7 +60,7 @@ export default function Game() {
                 track_name: randomSong.track_name,
             });
 
-            axios
+            axiosInstance
                 .get(`/random-lyric/${randomSong.track_id}`)
                 .then((response) => {
                     setLyic(response.data);

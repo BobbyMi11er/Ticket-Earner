@@ -1,12 +1,24 @@
 const express = require("express");
 require("dotenv").config();
 
-const PORT = process.env.PORT || 3001;
+
+const PORT = process.env.PORT || 8000;
 const API_KEY = process.env.API_KEY;
 const API_URL = "http://api.musixmatch.com/ws/1.1/";
 
 const app = express();
 const axios = require("axios");
+const cors = require('cors')
+
+const allowedOrigins = [
+    `http://localhost:3000`,
+]
+
+const corsOptions = {
+    origin: allowedOrigins
+}
+
+app.use(cors(corsOptions))
 
 // Zach Bryan Musixmatch ID
 const ARTIST_ID = 39897162;
