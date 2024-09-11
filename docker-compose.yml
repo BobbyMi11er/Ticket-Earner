@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  frontend:
+    image: bobbymi11er/ticket-earner-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    image: bobbymi11er/ticket-earner-backend
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
