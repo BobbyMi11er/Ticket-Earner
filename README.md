@@ -5,7 +5,7 @@
 ## Program Description:
 This program was created in light of recent issues with Ticketmaster for artists such as Zach Bryan and Taylor Swift going on tour. Simply put, resellers and bots are being blamed for the lack of access of tickets for the artists' true fans and exponentially driving up prices. This website is one version of a solution for this problem by requiring users to match a random Zach Bryan lyric to its corresponding song and album. If the user gets 60% or better, they are redirected to Zach Bryan's Ticketmaster page to be given the opportunity to purchase tickets. If not, they lose that opportunity.
 
-It can be accessed (here!)[http://3.12.30.87/]
+It can be accessed [here!](http://3.12.30.87/)
 
 ![Screenshot of Landing Page](./client/src/imgs/first_page.png)
 ![Screenshot of Game Page](./client/src/imgs/second_page.png)
