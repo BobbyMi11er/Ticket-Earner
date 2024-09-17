@@ -1,9 +1,9 @@
 const express = require("express");
+const keys = require('./keys')
 require("dotenv").config();
 
 
 const PORT = process.env.PORT || 8000;
-const API_KEY = process.env.API_KEY;
 const API_URL = "http://api.musixmatch.com/ws/1.1/";
 
 const app = express();
@@ -26,6 +26,10 @@ const ARTIST_NAME = "zach%20bryan";
 // YYYYMMDD
 const DATE_CUTOFF = 20220101;
 
+app.get("/", (req, res) => {
+    res.send("Hello World");
+})
+
 app.get("/playable", (req, res) => {
     res.send(true);
 });
@@ -35,7 +39,7 @@ app.get("/random-lyric/:trackID", async (req, res) => {
     try {
         const trackID = req.params.trackID;
 
-        const lyricSearchURL = `${API_URL}track.lyrics.get?track_id=${trackID}&apikey=${API_KEY}`;
+        const lyricSearchURL = `${API_URL}track.lyrics.get?track_id=${trackID}&apikey=${keys.API_KEY}`;
         const response = await axios.get(lyricSearchURL);
 
         const lyricsStr = response.data.message.body.lyrics.lyrics_body;
@@ -67,7 +71,7 @@ app.get("/getData", async (req, res) => {
     // search for tracks from before DATE_CUTOFF - DATE_CUTOFF and 2 calls allows us to get up to 200 songs instead of 100
     // need to use this because other musixmatch api calls are deprecated
     try {
-        var trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${API_KEY}&f_track_release_group_first_release_date_max=${DATE_CUTOFF}`;
+        var trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${keys.API_KEY}&f_track_release_group_first_release_date_max=${DATE_CUTOFF}`;
         var response = await axios.get(trackSearchURL);
 
         var trackList = response.data.message.body.track_list;
@@ -78,7 +82,7 @@ app.get("/getData", async (req, res) => {
         processData(data, albums, trackList);
 
         // search for tracks from after DATE_CUTOFF
-        trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${API_KEY}&f_track_release_group_first_release_date_min=${DATE_CUTOFF}`;
+        trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${keys.API_KEY}&f_track_release_group_first_release_date_min=${DATE_CUTOFF}`;
         response = await axios.get(trackSearchURL);
         trackList = response.data.message.body.track_list;
 

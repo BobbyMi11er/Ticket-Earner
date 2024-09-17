@@ -1,22 +1,30 @@
 version: '3'
 
 services:
-  frontend:
-    image: bobbymi11er/ticket-earner-frontend
-    ports:
-      - "3000:3000"
+  nginx:
     depends_on:
-      - backend
-    networks:
-      - app-network
-
-  backend:
-    image: bobbymi11er/ticket-earner-backend
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
     ports:
-      - "8000:8000"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - "3050:80"
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: "./server"
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - API_KEY=INSERT HERE
+  client:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app

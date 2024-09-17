@@ -34,7 +34,7 @@ export default function Game() {
     const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
-        axiosInstance.get(`/getData`).then((response) => {
+        axiosInstance.get(`/api/getData`).then((response) => {
             setData(response.data);
             const tempData = response.data;
             let albums = [];
@@ -61,7 +61,7 @@ export default function Game() {
             });
 
             axiosInstance
-                .get(`/random-lyric/${randomSong.track_id}`)
+                .get(`/api/random-lyric/${randomSong.track_id}`)
                 .then((response) => {
                     setLyic(response.data);
                 });

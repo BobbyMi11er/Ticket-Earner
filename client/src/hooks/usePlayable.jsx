@@ -5,7 +5,7 @@ export function usePlayable() {
     const [playable, setPlayable] = useState("");
 
     useEffect(() => {
-        axiosInstance.get(`/playable`).then((response) => {
+        axiosInstance.get(`/api/playable`).then((response) => {
             setPlayable(response.data);
         });
     }, [playable]);
