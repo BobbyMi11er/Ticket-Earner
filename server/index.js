@@ -4,8 +4,8 @@ require("dotenv").config();
 
 
 const PORT = process.env.PORT || 8000;
-const API_URL = "http://api.musixmatch.com/ws/1.1/";
-
+var api_url = "http://api.musixmatch.com/ws/1.1/";
+var api_key = "YOUR_API_KEY_HERE";
 const app = express();
 const axios = require("axios");
 const cors = require('cors')
@@ -21,10 +21,10 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // Zach Bryan Musixmatch ID
-const ARTIST_ID = 39897162;
-const ARTIST_NAME = "zach%20bryan";
+var artist_id  = 39897162;
+var artist_name = "zach%20bryan";
 // YYYYMMDD
-const DATE_CUTOFF = 20220101;
+var date_cutoff = 20220101;
 
 app.get("/", (req, res) => {
     res.send("Hello World");
@@ -39,27 +39,35 @@ app.get("/random-lyric/:trackID", async (req, res) => {
     try {
         const trackID = req.params.trackID;
 
-        const lyricSearchURL = `${API_URL}track.lyrics.get?track_id=${trackID}&apikey=${keys.API_KEY}`;
-        const response = await axios.get(lyricSearchURL);
-
-        const lyricsStr = response.data.message.body.lyrics.lyrics_body;
-        const lyricsArray = lyricsStr.split("\n");
-        let lyricsArrayCleaned = [];
-
-        for (let i = 0; i < lyricsArray.length; i += 2) {
-            if (validLyric(lyricsArray[i]) && validLyric(lyricsArray[i + 1])) {
-                lyricsArrayCleaned.push(
-                    lyricsArray[i] + "\n" + lyricsArray[i + 1]
-                );
+        var lyricSearchURL = api_url+"track.lyrics.get?track_id="+trackID+"&apikey="+api_key;
+        var response = await axios.get(lyricSearchURL);
+        if (response.data.message.header.status_code == 404) {
+            lyricSearchURL = api_url+"track.snippet.get?track_id="+trackID+"&apikey="+api_key
+            response = await axios.get(lyricSearchURL);
+            if (response.data.message.header.status_code == 404) {
+                res.send("Error: Musixmatch Lyric Fetch Not Working");
             }
+            res.send(response.data.message.body.snippet.snippet_body)
         }
+        else {
+            const lyricsStr = response.data.message.body.lyrics.lyrics_body;
+            const lyricsArray = lyricsStr.split("\n");
+            let lyricsArrayCleaned = [];
 
-        let randLyric = getRandomElement(lyricsArrayCleaned);
-        res.send(randLyric);
+            for (let i = 0; i < lyricsArray.length; i += 2) {
+                if (validLyric(lyricsArray[i]) && validLyric(lyricsArray[i + 1])) {
+                    lyricsArrayCleaned.push(
+                        lyricsArray[i] + "\n" + lyricsArray[i + 1]
+                    );
+                }
+            }
+
+            let randLyric = getRandomElement(lyricsArrayCleaned);
+            res.send(randLyric);
+        }
     } catch (err) {
         console.log(err);
     }
-
     // get body.lyrics.lyrics_body
     // split into array at \n
     // get random element from array
@@ -71,8 +79,12 @@ app.get("/getData", async (req, res) => {
     // search for tracks from before DATE_CUTOFF - DATE_CUTOFF and 2 calls allows us to get up to 200 songs instead of 100
     // need to use this because other musixmatch api calls are deprecated
     try {
-        var trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${keys.API_KEY}&f_track_release_group_first_release_date_max=${DATE_CUTOFF}`;
-        var response = await axios.get(trackSearchURL);
+        // var trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${API_KEY}&f_track_release_group_first_release_date_max=${DATE_CUTOFF}`;
+        
+	var trackSearchURL = api_url+"track.search?q_artist="+artist_name+"&f_artist_id="+artist_id;
+	trackSearchURL += "&page_size=100&apikey="+api_key+"&f_track_release_group_first_release_date_max="+date_cutoff;
+
+	var response = await axios.get(trackSearchURL);
 
         var trackList = response.data.message.body.track_list;
 
@@ -82,9 +94,14 @@ app.get("/getData", async (req, res) => {
         processData(data, albums, trackList);
 
         // search for tracks from after DATE_CUTOFF
-        trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${keys.API_KEY}&f_track_release_group_first_release_date_min=${DATE_CUTOFF}`;
-        response = await axios.get(trackSearchURL);
-        trackList = response.data.message.body.track_list;
+        // trackSearchURL = `${API_URL}track.search?q_artist=${ARTIST_NAME}&f_artist_id=${ARTIST_ID}&page_size=100&apikey=${API_KEY}&f_track_release_group_first_release_date_min=${DATE_CUTOFF}`;
+        
+	trackSearchURL = api_url+"track.search?q_artist="+artist_name+"&f_artist_id="+artist_id;
+        trackSearchURL += "&page_size=100&apikey="+api_key+"&f_track_release_group_first_release_date_min="+date_cutoff;
+	
+	response = await axios.get(trackSearchURL);
+	
+	trackList = response.data.message.body.track_list;
 
         processData(data, albums, trackList);
 

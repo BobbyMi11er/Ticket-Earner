@@ -1,30 +1,27 @@
-version: '3'
-
 services:
-  nginx:
-    depends_on:
-      - api
-      - client
-    restart: always
+  backend:
     build:
-      dockerfile: Dockerfile.dev
-      context: ./nginx
+      context: ./server
+    image: backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    dns:
+      - 8.8.8.8
+    networks:
+      - my-network
+
+  frontend:
+    build:
+      context: ./client
+    image: frontend
+    container_name: frontend
     ports:
       - "80:80"
-  api:
-    build:
-      dockerfile: Dockerfile.dev
-      context: "./server"
-    volumes:
-      - /app/node_modules
-      - ./server:/app
-    environment:
-      - API_KEY=INSERT HERE
-  client:
-    stdin_open: true
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./client
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+    depends_on:
+      - backend
+    networks:
+      - my-network
+networks:
+  my-network:
+    driver: bridge
