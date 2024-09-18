@@ -17,7 +17,7 @@ export default function Opening({ playable, setLoadGame }) {
             const game = document.getElementById("game");
             if (game) {
                 game.scrollIntoView({ behavior: "smooth" });
-                console.log("scrolling");
+                // console.log("scrolling");
             }
         }
     })

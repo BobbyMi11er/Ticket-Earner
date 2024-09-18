@@ -33,17 +33,24 @@ export default function Game() {
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    useEffect(() => {
+        useEffect(() => {
         axiosInstance.get(`/getData`).then((response) => {
-            setData(response.data);
-            const tempData = response.data;
-            let albums = [];
-            tempData.forEach((element) => {
-                albums.push(element.album_name);
-            });
-            setAlbumList(albums);
+            if (response.data.failure) {
+                console.log(response.data.message)
+                setLyic("Musixmatch API " + response.data.message)
+            }
+            else {
+                setData(response.data);
+                const tempData = response.data;
+                let albums = [];
+                tempData.forEach((element) => {
+                    albums.push(element.album_name);
+                });
+                setAlbumList(albums);
 
-            getLyric(tempData);
+                getLyric(tempData);
+            }
+            
         });
     }, []); // dependency array so getData only fetched once
 
@@ -60,7 +67,7 @@ export default function Game() {
                 track_name: randomSong.track_name,
             });
 		
-	    console.log(randomSong);
+	    // console.log(randomSong);
             axiosInstance
                 .get(`/random-lyric/${randomSong.track_id}`)
                 .then((response) => {
@@ -100,7 +107,7 @@ export default function Game() {
                 });
                 setStrokeColor((strokeColor) => [
                     ...strokeColor,
-                    palate.primary,
+                    '#cc5500',
                 ]);
             } else {
                 // guess is incorrect
@@ -117,7 +124,7 @@ export default function Game() {
             setPercent(percent + 20);
 
             // keep playing
-			console.log(numIncorrect);
+		//	console.log(numIncorrect);
             if (numIncorrect < 2 && numGuesses < 5) {
                 alreadyRun = false;
                 getLyric(data);
